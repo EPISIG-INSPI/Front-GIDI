@@ -481,7 +481,7 @@ export const ReporteResultados = () => {
                         </Dialog>
                         <Dialog visible={pdfDialog} style={{ width: '750px' }} header="Evidencia" modal className="p-fluid" onHide={hideDialog}>
                             <div className='pdf-container'>
-                                {viewPdf && <><Worker workerUrl="https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.worker.js">
+                                {viewPdf && <><Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.js">
                                     <Viewer
                                         fileUrl={viewPdf}
                                         plugins={[defaultLayoutPluginInstance]}

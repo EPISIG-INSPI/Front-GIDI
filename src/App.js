@@ -36,10 +36,10 @@ const App = () => {
         usuario: ''
     };
 
-    const [layoutMode, setLayoutMode] = useState('static');
-    const [layoutColorMode, setLayoutColorMode] = useState('darck')
-    const [inputStyle, setInputStyle] = useState('outlined');
-    const [ripple, setRipple] = useState(true);
+    const [layoutMode] = useState('static');
+    const [layoutColorMode] = useState('darck')
+    const [inputStyle] = useState('outlined');
+    const [ripple] = useState(true);
     const [staticMenuInactive, setStaticMenuInactive] = useState(false);
     const [overlayMenuActive, setOverlayMenuActive] = useState(false);
     const [mobileMenuActive, setMobileMenuActive] = useState(false);
@@ -47,7 +47,7 @@ const App = () => {
     let [menuIzquierda, setMenuIzquierda] = useState([]);
 
     const [rol, setRol] = useState('');
-    const [usuario, setUsuario] = useState(userEmpty);
+    const [usuario] = useState(userEmpty);
 
     PrimeReact.ripple = true;
 

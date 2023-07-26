@@ -11,8 +11,6 @@ import { Calendar } from 'primereact/calendar';
 import { RadioButton } from 'primereact/radiobutton';
 import { InputSwitch } from 'primereact/inputswitch';
 import { Dropdown } from 'primereact/dropdown';
-import { FileUpload } from 'primereact/fileupload';
-import { ProgressBar } from 'primereact/progressbar';
 import { Tag } from 'primereact/tag';
 
 import RequerimientoService from '../service/RequerimientoService';
@@ -57,27 +55,6 @@ export const RequerimientosMuestras = () => {
         box: '',
         year: '',
         observations: ''
-    };
-
-    let requestDetailEmpty =
-    {
-        id: null,
-        placeCode: '',
-        collectionDate: '',
-        taxonomicId: '',
-        provinceId: '',
-        cantonId: '',
-        parishId: '',
-        latitude: '',
-        longitude: '',
-        genderId: '',
-        isPreprocessed: '',
-        isAccepted: '',
-        reazonNoAccepted: '',
-        storageId: '',
-        numberBox: '',
-        yearCode: '',
-        observationSampleDetail: ''
     };
 
     let requestEmpty =
@@ -178,7 +155,7 @@ export const RequerimientosMuestras = () => {
     const [generoSeleccionado, setGeneroSeleccionado] = useState(null);
 
     const [almacenEnable, setAlmacenEnable] = useState(true);
-    const [almacen, setAlmacen] = useState(almacenEmpty);
+    const [almacen] = useState(almacenEmpty);
 
     const [provincias, setProvincias] = useState(null);
     const [provinciaFiltrado, setProvinciaFiltrado] = useState([]);
@@ -199,14 +176,13 @@ export const RequerimientosMuestras = () => {
     const [preproSeleccionado, setPreproSeleccionado] = useState(null);
 
     const [request, setRequest] = useState(requestEmpty);
-    const [requestDetail, setRequestDetail] = useState(requestDetailEmpty);
 
     const [evidencia, setEvidencia] = useState('');
     const [evidenciaUpload, setEvidenciaUpload] = useState(evidenceLoad);
     const [reqLoadId, setReqLoadId] = useState(null);
     const [subirButon, setSubirButon] = useState(false);
 
-    const [chgStatus, setChgStatus] = useState(emptyChangeStatus);
+    const [chgStatus] = useState(emptyChangeStatus);
 
     useEffect(() => {
         async function getRequerimientos() {
@@ -216,7 +192,7 @@ export const RequerimientosMuestras = () => {
                 let y = a.number;
                 return (x < y) ? -1 : (x > y) ? 1 : 0;
             });
-            
+
             setRequerimientos(reque);
         }
         getRequerimientos();
@@ -1051,7 +1027,7 @@ export const RequerimientosMuestras = () => {
 
     const isPreprocessedEditor = (options) => {
         return (
-            <Dropdown value={preproSeleccionado} options={condiciones} onChange={(e) => {onIsPreprocessedChange(options, e); }} optionLabel="name" />
+            <Dropdown value={preproSeleccionado} options={condiciones} onChange={(e) => { onIsPreprocessedChange(options, e); }} optionLabel="name" />
         );
     }
 
@@ -1151,21 +1127,51 @@ export const RequerimientosMuestras = () => {
                             <Column field="sequence" header="Secuenciación" sortable body={sequenceBodyTemplate} style={{ width: '6rem' }}></Column>
                         </DataTable>
 
-                        <Dialog visible={solicitudDialog} style={{ width: '98%' }} modal className="p-fluid" footer={requerimientoDialogFooter} onHide={hideDialog}>
+                        <Dialog visible={solicitudDialog} style={{ width: '98%' }} modal className="p-fluid" footer={requerimientoDialogFooter} onHide={hideDialog} scrollable>
                             <div>
                                 <div className="flex">
-                                    <div className="col-2 grid justify-content-center">
-                                        <img src='/assets/demo/images/galeriaSistema/registro.jpg' width="175rem" height="280rem" />
-                                    </div>
-                                    <div className="col-10">
+
+                                    <div className="col-1" />
+                                    <div className="col-7">
                                         <h3 className="m-0">Registro de ingreso de requerimiento del usuario</h3>
-                                        <div className="formgroup-inline mt-2">
-                                            <div className="col-3">
+
+                                        <div className="formgroup-inline mt-4">
+                                            <div className="col-4">
                                                 <label htmlFor="dateReques">Fecha del requerimiento</label>
                                                 <Calendar id="dateReques" showIcon showButtonBar value={dateValueRequest} onChange={(e) => { setDateValueRequest(e.target.value); }}></Calendar>
                                                 {submitted && !dateValueRequest && <small className="p-invalid" >Fecha es requerido.</small>}
                                             </div>
+
+                                            <div className="col-4 mr-6">
+                                                <label htmlFor="name">Usuario requiriente</label>
+                                                <AutoComplete placeholder="Buscar" id="dd" dropdown value={usuarioSeleccionado} onChange={(e) => { setUsuarioSeleccionadoMetodo(e); }}
+                                                    suggestions={usuarioFiltrado} completeMethod={searchUsuario} field="name" />
+                                                {submitted && !usuarioSeleccionado && <small style={{ color: 'red' }}>Usuario es requerido.</small>}
+                                            </div>
+
                                             <div className="col-3">
+                                                <label htmlFor="sequence">Secuenciación</label>
+                                                <br />
+                                                <div className="flex mt-2">
+                                                    <InputSwitch className="mx-3" checked={isSequence} onChange={(e) => changeSequence(e.value)} />
+                                                    {isSequence && <label className="mt-1">  Sí</label>}
+                                                    {!isSequence && <label className="mt-1">  No</label>}
+                                                </div>
+                                            </div>
+
+                                        </div>
+                                        <div className="formgroup-inline mt-3">
+
+                                            <div className="col-4">
+                                                <label htmlFor="name">Proyecto de investigación</label>
+                                                <AutoComplete placeholder="Buscar" id="dd" dropdown value={proyectoSeleccionado} onChange={(e) => { setProyectoSeleccionadoMetodo(e); }} suggestions={proyectoFiltrado} completeMethod={searchProyecto} field="name" />
+                                                {submitted && !proyectoSeleccionado && <small style={{ color: 'red' }}>Proyecto es requerido.</small>}
+                                            </div>
+                                            <div className="col-4 mr-6">
+                                                <label htmlFor="name">Analisis requerido</label>
+                                                <AutoComplete placeholder="Buscar" id="dd" dropdown value={analisisSeleccionado}
+                                                    disabled={analisisEnable} onChange={(e) => { setAnalisisSeleccionadoMetodo(e); }} suggestions={analisisFiltrado} completeMethod={searchAnalisis} field="name" />
+                                                {submitted && !analisisSeleccionado && <small style={{ color: 'red' }}>Analisis es requerido.</small>}
                                             </div>
                                             <div className="col-3">
                                                 <label htmlFor="name">Tipo usuario</label>
@@ -1184,59 +1190,51 @@ export const RequerimientosMuestras = () => {
                                                     </div>
                                                 </div>
                                             </div>
-                                            <div className="col-3">
-                                                <label htmlFor="name">Usuario requiriente</label>
-                                                <AutoComplete placeholder="Buscar" id="dd" dropdown value={usuarioSeleccionado} onChange={(e) => { setUsuarioSeleccionadoMetodo(e); }}
-                                                    suggestions={usuarioFiltrado} completeMethod={searchUsuario} field="name" />
-                                                {submitted && !usuarioSeleccionado && <small style={{ color: 'red' }}>Usuario es requerido.</small>}
-                                            </div>
+
                                         </div>
+
+
                                         <div className="formgroup-inline">
-                                            <div className="col-3">
-                                                <label htmlFor="name">Proyecto de investigación</label>
-                                                <AutoComplete placeholder="Buscar" id="dd" dropdown value={proyectoSeleccionado} onChange={(e) => { setProyectoSeleccionadoMetodo(e); }} suggestions={proyectoFiltrado} completeMethod={searchProyecto} field="name" />
-                                                {submitted && !proyectoSeleccionado && <small style={{ color: 'red' }}>Proyecto es requerido.</small>}
-                                            </div>
-                                            <div className="col-2">
-                                                <label htmlFor="name">Analisis requerido</label>
-                                                <AutoComplete placeholder="Buscar" id="dd" dropdown value={analisisSeleccionado}
-                                                    disabled={analisisEnable} onChange={(e) => { setAnalisisSeleccionadoMetodo(e); }} suggestions={analisisFiltrado} completeMethod={searchAnalisis} field="name" />
-                                                {submitted && !analisisSeleccionado && <small style={{ color: 'red' }}>Analisis es requerido.</small>}
-                                            </div>
-                                            <div className="col-3">
+
+                                            <div className="col-4">
                                                 <label htmlFor="name">Especificación del analisis</label>
                                                 <AutoComplete placeholder="Buscar" id="dd" dropdown value={especificacionSeleccionado}
                                                     disabled={especificacionesEnable} onChange={(e) => { setEspecificacionSeleccionadoMetodo(e); }} suggestions={especificacionFiltrado} completeMethod={searchEspecificacion} field="name" />
                                                 {submitted && !especificacionSeleccionado && <small style={{ color: 'red' }}>Especificación es requerido.</small>}
                                             </div>
-                                            <div className="col-2">
+                                            <div className="col-4">
                                                 <label htmlFor="name">Tipo de muestra</label>
                                                 <AutoComplete placeholder="Buscar" id="dd" dropdown value={tipoMuestraSeleccionado} onChange={(e) => { setTipoMuestraSeleccionadoMetodo(e); }} suggestions={tipoMuestraFiltrado} completeMethod={searchTipoMuestra} field="name" />
                                                 {submitted && !tipoMuestraSeleccionado && <small style={{ color: 'red' }}>Tipo de Muestra es requerido.</small>}
                                             </div>
-                                            <div className="col-2">
-                                                <label htmlFor="sequence">Secuenciación</label>
-                                                <br />
-                                                <div className="flex mt-2">
-                                                    <InputSwitch className="mx-3" checked={isSequence} onChange={(e) => changeSequence(e.value)} />
-                                                    {isSequence && <label className="mt-1">  Sí</label>}
-                                                    {!isSequence && <label className="mt-1">  No</label>}
-                                                </div>
+                                        </div>
+                                        <div className="formgroup-inline">
+                                            <div className="col-8">
+                                                <label htmlFor="rejected_sample_detail">Muestras rechazadas y razones para rechazo</label>
+                                                <small> (opcional)</small>
+                                                <InputTextarea id="rejected_sample_detail" value={obsReques} onChange={(e) => onObsRequesChange(e)} rows={3} columns={2} autoResize />
                                             </div>
                                         </div>
                                         <div className="formgroup-inline">
-                                            <div className="col-6">
-                                                <label htmlFor="obser">Observaciones del requerimiento</label>
+                                            <div className="col-8">
+                                                <label htmlFor="obser">Observaciones de las muestras ingresadas</label>
                                                 <small> (opcional)</small>
-                                                <InputTextarea id="obser" value={obsReques} onChange={(e) => onObsRequesChange(e)} rows={1} cols={20} autoResize />
+                                                <InputTextarea id="obser" value={obsReques} onChange={(e) => onObsRequesChange(e)} rows={3} autoResize />
                                             </div>
-                                            <div className="col-6">
-                                                <label htmlFor="obser">Observaciones de ingreso de muestras</label>
+                                        </div>
+                                        <div className="formgroup-inline">
+                                            <div className="col-8">
+                                                <label htmlFor="obser_f">Observaciones finales</label>
                                                 <small> (opcional)</small>
-                                                <InputTextarea id="obser" value={obsRegister} onChange={(e) => onObsRegisterChange(e)} rows={1} cols={20} autoResize />
+                                                <InputTextarea id="obser_f" value={obsRegister} onChange={(e) => onObsRegisterChange(e)} rows={3} autoResize />
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div className="col-4 grid justify-content-center">
+                                        <img src='/assets/demo/images/galeriaSistema/registro.jpg' height="500rem" />
+                                    </div>
+
                                 </div>
                                 <div className="mx-5">
                                     <div className="flex flex-column md:flex-row md:justify-content-between md:align-items-center">
@@ -1249,7 +1247,7 @@ export const RequerimientosMuestras = () => {
                                     </div>
                                     <div className="p-fluid mt-2">
                                         <DataTable value={products3} editMode="cell" className="editable-cells-table" rowHover scrollable inline style={{ fontSize: '14px', textAlign: 'center' }}
-                                            emptyMessage="Ninguna muestra agragada.">
+                                            emptyMessage="Ninguna muestra agregada.">
                                             {
                                                 columns.map(({ field, header }) => {
                                                     return <Column key={field} field={field} header={header}
@@ -1264,7 +1262,7 @@ export const RequerimientosMuestras = () => {
                         </Dialog>
                         <Dialog visible={pdfDialog} style={{ width: '750px' }} header="Evidencia" modal className="p-fluid" onHide={hideDialog}>
                             <div className='pdf-container'>
-                                {viewPdf && <><Worker workerUrl="https://unpkg.com/pdfjs-dist@2.13.216/build/pdf.worker.js">
+                                {viewPdf && <><Worker workerUrl="https://unpkg.com/pdfjs-dist@2.6.347/build/pdf.worker.js">
                                     <Viewer
                                         fileUrl={viewPdf}
                                         plugins={[defaultLayoutPluginInstance]}
